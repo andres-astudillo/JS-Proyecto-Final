@@ -1,6 +1,6 @@
 Sistema de Control de Caja en JavaScript
 
-Este proyecto es un sistema de control de caja diseñado en JavaScript que te permite registrar ingresos y egresos de dinero de manera fácil y rápida, con la capacidad de mantener un historial de movimientos, todo almacenado en el localStorage del navegador. También se conecta a una API para mostrar el precio del dólar blue en Argentina. 🚀
+Este proyecto es un sistema de control de caja diseñado en JavaScript que te permite registrar ingresos y egresos de dinero de manera fácil y rápida, con la capacidad de mantener un historial de movimientos, todo almacenado en el localStorage del navegador. También se conecta a una API para mostrar el precio del dólar blue en Argentina.
 
 Funcionalidades principales:
 - Ingresos y Egresos: Registra entradas y salidas de dinero con categorías predefinidas (como "Construcción", "Viáticos") o personalizadas.
