@@ -11,6 +11,7 @@ Este proyecto es un sistema de control de caja diseñado en JavaScript que te pe
 - Exportación a CSV: Descarga todo el historial de movimientos en formato CSV.
 - Persistencia de datos: Los movimientos se almacenan localmente en el navegador, así que aunque recargues la página, ¡nada se pierde!
 - Visualización amigable: Diferencia cada línea de la tabla de movimientos con colores alternados (blanco y gris) y usa colores llamativos: verde para ingresos y rojo para egresos.
+- 
 🛠️ Tecnologías utilizadas:
 - HTML5: Estructura de la página.
 - CSS3: Estilos para una visualización agradable y responsiva.
