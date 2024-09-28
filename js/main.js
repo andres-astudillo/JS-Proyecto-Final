@@ -72,8 +72,8 @@ document.getElementById('btnIngreso').addEventListener('click', () => {
             </select>
             <select id="categoria" class="swal2-input">
                 <option value="Construcción">Construcción</option>
-                <option value="Servicios">Diezmo</option>
-                <option value="Impuestos">Ofrenda</option>
+                <option value="Servicios">Servicios</option>
+                <option value="Impuestos">Impuestos</option>
                 <option value="Viáticos">Viáticos</option>
                 <option value="Otra">Otra</option>
             </select>
@@ -140,143 +140,102 @@ document.getElementById('btnIngreso').addEventListener('click', () => {
 
 // Manejar salida de dinero (Egresos)
 document.getElementById('btnSalida').addEventListener('click', () => {
-    document.getElementById('btnSalida').addEventListener('click', function() {
-        Swal.fire({
-            title: 'Registrar Salida',
-            html: `
-                <select id="categoriaSalida" class="swal2-input">
-                    <option value="Irrigación">Irrigación</option>
-                    <option value="Municipalidad">Municipalidad</option>
-                    <option value="Servicios">Servicios</option>
-                    <option value="Otro">Otro (Especificar)</option>
-                </select>
-                <input type="text" id="destinoSalida" class="swal2-input" placeholder="Especificar si es 'Otro'" style="display:none;">
-                <select id="monedaSalida" class="swal2-input">
-                    <option value="ARS">ARS</option>
-                    <option value="USD">USD</option>
-                    <option value="EUR">EUR</option>
-                    <option value="CLP">CLP</option>
-                </select>
-                <select id="metodoPagoSalida" class="swal2-input">
-                    <option value="Efectivo">Efectivo</option>
-                    <option value="Cheque">Cheque</option>
-                    <option value="Transferencia">Transferencia</option>
-                </select>
-                <select id="bancoSalida" class="swal2-input" style="display:none;">
-                    <option value="">Selecciona un banco</option>
-                    <option value="Mercado Pago">Mercado Pago</option>
-                    <option value="Banco Nación">Banco Nación</option>
-                    <option value="Banco Credicoop">Banco Credicoop</option>
-                </select>
-                <input type="number" id="cantidadSalida" class="swal2-input" placeholder="Cantidad">`,
-            showCancelButton: true,
-            confirmButtonText: 'Registrar Salida',
-            preConfirm: () => {
-                const categoria = document.getElementById('categoriaSalida').value;
-                const destinoPersonalizado = document.getElementById('destinoSalida').value;
-                const moneda = document.getElementById('monedaSalida').value;
-                const metodo = document.getElementById('metodoPagoSalida').value;
-                const banco = document.getElementById('bancoSalida').value;
-                const cantidadSalida = parseFloat(document.getElementById('cantidadSalida').value);
-                const destino = categoria === 'Otro' ? destinoPersonalizado : categoria;
-                if (!destino || cantidadSalida <= 0) {
-                    Swal.showValidationMessage('Por favor ingrese una categoría válida y una cantidad mayor que 0');
-                    return false;
-                }
-                return { destino, cantidadSalida, metodo, moneda, banco };
-            }
-        }).then((result) => {
-            if (result.isConfirmed) {
-                const { destino, cantidadSalida, metodo, moneda, banco } = result.value;
-                registrarMovimiento('Salida', destino, cantidadSalida, moneda, metodo, banco);
-                actualizarSaldoMoneda(moneda, cantidadSalida, 'Salida');
-                guardarEnLocalStorage();
-                actualizarSaldos();
-            }
-        });
-    });
-
-// Función para exportar datos a CSV
-document.getElementById('btnExportarCSV').addEventListener('click', () => {
-    document.getElementById('btnExportarCSV').addEventListener('click', function() {
-        const rows = Array.from(movimientosTabla.rows);
-        const csvContent = rows.map(row => Array.from(row.cells).map(cell => cell.textContent).join(',')).join('\n');
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.setAttribute('href', url);
-        a.setAttribute('download', 'movimientos.csv');
-        a.click();
-        URL.revokeObjectURL(url);
-    });
-});
-
-// Función para buscar y filtrar
-document.getElementById('btnBuscar').addEventListener('click', () => {
     Swal.fire({
-        title: 'Buscar',
-        html: `<input id="buscar" type="text" class="swal2-input" placeholder="Buscar por descripción">`,
-        preConfirm: () => {
-            const query = document.getElementById('buscar').value.toLowerCase();
-            buscarEnTabla(query);
-        }
-    });
-});
-
-document.getElementById('btnFiltrar').addEventListener('click', () => {
-    Swal.fire({
-        title: 'Filtrar',
+        title: 'Registrar Salida',
         html: `
-            <input id="fechaInicio" type="date" class="swal2-input">
-            <input id="fechaFin" type="date" class="swal2-input">
+            <select id="categoriaSalida" class="swal2-input">
+                <option value="Irrigación">Irrigación</option>
+                <option value="Municipalidad">Municipalidad</option>
+                <option value="Servicios">Servicios</option>
+                <option value="Otro">Otro (Especificar)</option>
+            </select>
+            <input type="text" id="destinoSalida" class="swal2-input" placeholder="Especificar si es 'Otro'" style="display:none;">
+            <select id="monedaSalida" class="swal2-input">
+                <option value="ARS">ARS</option>
+                <option value="USD">USD</option>
+                <option value="EUR">EUR</option>
+                <option value="CLP">CLP</option>
+            </select>
+            <select id="metodoPagoSalida" class="swal2-input">
+                <option value="Efectivo">Efectivo</option>
+                <option value="Cheque">Cheque</option>
+                <option value="Transferencia">Transferencia</option>
+            </select>
+            <select id="bancoSalida" class="swal2-input" style="display:none;">
+                <option value="">Selecciona un banco</option>
+                <option value="Mercado Pago">Mercado Pago</option>
+                <option value="Banco Nación">Banco Nación</option>
+                <option value="Banco Credicoop">Banco Credicoop</option>
+            </select>
+            <input type="number" id="cantidadSalida" class="swal2-input" placeholder="Cantidad">
         `,
+        showCancelButton: true,
+        confirmButtonText: 'Registrar Salida',
         preConfirm: () => {
-            const fechaInicio = document.getElementById('fechaInicio').value;
-            const fechaFin = document.getElementById('fechaFin').value;
-            filtrarPorFecha(fechaInicio, fechaFin);
+            const categoria = document.getElementById('categoriaSalida').value;
+            const cantidad = parseFloat(document.getElementById('cantidadSalida').value);
+            const moneda = document.getElementById('monedaSalida').value;
+            const metodoPago = document.getElementById('metodoPagoSalida').value;
+            const destino = categoria === 'Otro' ? document.getElementById('destinoSalida').value : categoria;
+            const fecha = new Date().toLocaleString();
+
+            if (isNaN(cantidad)) {
+                Swal.showValidationMessage('La cantidad debe ser un número válido');
+                return false;
+            }
+
+            return { categoria: destino, cantidad, moneda, metodoPago, fecha };
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const movimiento = {
+                tipo: 'Salida',
+                cantidad: result.value.cantidad,
+                moneda: result.value.moneda,
+                descripcion: result.value.categoria,
+                metodo: result.value.metodoPago,
+                fecha: result.value.fecha
+            };
+
+            // Actualizar el saldo según la moneda seleccionada
+            if (movimiento.moneda === 'ARS') saldoARS -= movimiento.cantidad;
+            if (movimiento.moneda === 'USD') saldoUSD -= movimiento.cantidad;
+            if (movimiento.moneda === 'EUR') saldoEUR -= movimiento.cantidad;
+            if (movimiento.moneda === 'CLP') saldoCLP -= movimiento.cantidad;
+
+            // Agregar el movimiento a la tabla y localStorage
+            agregarMovimientoATabla(movimiento);
+            actualizarSaldos();
+            localStorage.setItem('saldoARS', saldoARS);
+            localStorage.setItem('saldoUSD', saldoUSD);
+            localStorage.setItem('saldoEUR', saldoEUR);
+            localStorage.setItem('saldoCLP', saldoCLP);
+        }
+    });
+
+    // Mostrar campo de destino si se selecciona "Otro" en categoría
+    document.getElementById('categoriaSalida').addEventListener('change', function () {
+        const destinoInput = document.getElementById('destinoSalida');
+        if (this.value === 'Otro') {
+            destinoInput.style.display = 'block';
+        } else {
+            destinoInput.style.display = 'none';
+        }
+    });
+
+    // Mostrar campo de selección de banco si se selecciona "Cheque" en método de pago
+    document.getElementById('metodoPagoSalida').addEventListener('change', function () {
+        const bancoSelect = document.getElementById('bancoSalida');
+        if (this.value === 'Cheque') {
+            bancoSelect.style.display = 'block';
+        } else {
+            bancoSelect.style.display = 'none';
         }
     });
 });
 
-function buscarEnTabla(query) {
-    document.getElementById('btnBuscar').addEventListener('click', function() {
-        // Lógica de búsqueda aquí
-        const query = searchInput.value.toLowerCase();
-        const rows = movimientosTabla.querySelectorAll('tr');
-        rows.forEach(row => {
-            const cells = row.querySelectorAll('td');
-            const matches = Array.from(cells).some(cell => cell.textContent.toLowerCase().includes(query));
-            row.style.display = matches ? '' : 'none';
-        });
-    });
-}
-
-function filtrarPorFecha(fechaInicio, fechaFin) {
-    document.getElementById('btnFiltrar').addEventListener('click', function() {
-        Swal.fire({
-            title: 'Filtrar Movimientos',
-            html: `
-                <input type="date" id="fechaDesde" class="swal2-input" placeholder="Desde">
-                <input type="date" id="fechaHasta" class="swal2-input" placeholder="Hasta">
-                <input type="text" id="descripcionFiltro" class="swal2-input" placeholder="Descripción">`,
-            showCancelButton: true,
-            confirmButtonText: 'Filtrar',
-            preConfirm: () => {
-                const fechaDesde = document.getElementById('fechaDesde').value;
-                const fechaHasta = document.getElementById('fechaHasta').value;
-                const descripcion = document.getElementById('descripcionFiltro').value;
-
-                return { fechaDesde, fechaHasta, descripcion };
-            }
-        }).then((result) => {
-            if (result.isConfirmed) {
-                const { fechaDesde, fechaHasta, descripcion } = result.value;
-                filtrarMovimientos(fechaDesde, fechaHasta, descripcion);
-            }
-        });
-    });
-}
-
-// Iniciar la app cargando datos y obteniendo el dólar blue
-cargarDatos();
-obtenerDolarBlue();
+// Cargar datos y consultar el dólar blue al cargar la página
+window.onload = () => {
+    cargarDatos();
+    obtenerDolarBlue();
+};
