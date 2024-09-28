@@ -72,8 +72,8 @@ document.getElementById('btnIngreso').addEventListener('click', () => {
             </select>
             <select id="categoria" class="swal2-input">
                 <option value="Construcción">Construcción</option>
-                <option value="Diezmo">Diezmo</option>
-                <option value="Ofrenda">Ofrenda</option>
+                <option value="Servicios">Diezmo</option>
+                <option value="Impuestos">Ofrenda</option>
                 <option value="Viáticos">Viáticos</option>
                 <option value="Otra">Otra</option>
             </select>
@@ -140,13 +140,75 @@ document.getElementById('btnIngreso').addEventListener('click', () => {
 
 // Manejar salida de dinero (Egresos)
 document.getElementById('btnSalida').addEventListener('click', () => {
-    // Similar a Ingreso pero con tipo "Egreso"
-    // ...
-});
+    document.getElementById('btnSalida').addEventListener('click', function() {
+        Swal.fire({
+            title: 'Registrar Salida',
+            html: `
+                <select id="categoriaSalida" class="swal2-input">
+                    <option value="Irrigación">Irrigación</option>
+                    <option value="Municipalidad">Municipalidad</option>
+                    <option value="Servicios">Servicios</option>
+                    <option value="Otro">Otro (Especificar)</option>
+                </select>
+                <input type="text" id="destinoSalida" class="swal2-input" placeholder="Especificar si es 'Otro'" style="display:none;">
+                <select id="monedaSalida" class="swal2-input">
+                    <option value="ARS">ARS</option>
+                    <option value="USD">USD</option>
+                    <option value="EUR">EUR</option>
+                    <option value="CLP">CLP</option>
+                </select>
+                <select id="metodoPagoSalida" class="swal2-input">
+                    <option value="Efectivo">Efectivo</option>
+                    <option value="Cheque">Cheque</option>
+                    <option value="Transferencia">Transferencia</option>
+                </select>
+                <select id="bancoSalida" class="swal2-input" style="display:none;">
+                    <option value="">Selecciona un banco</option>
+                    <option value="Mercado Pago">Mercado Pago</option>
+                    <option value="Banco Nación">Banco Nación</option>
+                    <option value="Banco Credicoop">Banco Credicoop</option>
+                </select>
+                <input type="number" id="cantidadSalida" class="swal2-input" placeholder="Cantidad">`,
+            showCancelButton: true,
+            confirmButtonText: 'Registrar Salida',
+            preConfirm: () => {
+                const categoria = document.getElementById('categoriaSalida').value;
+                const destinoPersonalizado = document.getElementById('destinoSalida').value;
+                const moneda = document.getElementById('monedaSalida').value;
+                const metodo = document.getElementById('metodoPagoSalida').value;
+                const banco = document.getElementById('bancoSalida').value;
+                const cantidadSalida = parseFloat(document.getElementById('cantidadSalida').value);
+                const destino = categoria === 'Otro' ? destinoPersonalizado : categoria;
+                if (!destino || cantidadSalida <= 0) {
+                    Swal.showValidationMessage('Por favor ingrese una categoría válida y una cantidad mayor que 0');
+                    return false;
+                }
+                return { destino, cantidadSalida, metodo, moneda, banco };
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const { destino, cantidadSalida, metodo, moneda, banco } = result.value;
+                registrarMovimiento('Salida', destino, cantidadSalida, moneda, metodo, banco);
+                actualizarSaldoMoneda(moneda, cantidadSalida, 'Salida');
+                guardarEnLocalStorage();
+                actualizarSaldos();
+            }
+        });
+    });
 
 // Función para exportar datos a CSV
 document.getElementById('btnExportarCSV').addEventListener('click', () => {
-    // Lógica para exportar a CSV
+    document.getElementById('btnExportarCSV').addEventListener('click', function() {
+        const rows = Array.from(movimientosTabla.rows);
+        const csvContent = rows.map(row => Array.from(row.cells).map(cell => cell.textContent).join(',')).join('\n');
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.setAttribute('href', url);
+        a.setAttribute('download', 'movimientos.csv');
+        a.click();
+        URL.revokeObjectURL(url);
+    });
 });
 
 // Función para buscar y filtrar
@@ -177,11 +239,42 @@ document.getElementById('btnFiltrar').addEventListener('click', () => {
 });
 
 function buscarEnTabla(query) {
-    // Lógica de búsqueda en la tabla
+    document.getElementById('btnBuscar').addEventListener('click', function() {
+        // Lógica de búsqueda aquí
+        const query = searchInput.value.toLowerCase();
+        const rows = movimientosTabla.querySelectorAll('tr');
+        rows.forEach(row => {
+            const cells = row.querySelectorAll('td');
+            const matches = Array.from(cells).some(cell => cell.textContent.toLowerCase().includes(query));
+            row.style.display = matches ? '' : 'none';
+        });
+    });
 }
 
 function filtrarPorFecha(fechaInicio, fechaFin) {
-    // Lógica de filtrado de movimientos
+    document.getElementById('btnFiltrar').addEventListener('click', function() {
+        Swal.fire({
+            title: 'Filtrar Movimientos',
+            html: `
+                <input type="date" id="fechaDesde" class="swal2-input" placeholder="Desde">
+                <input type="date" id="fechaHasta" class="swal2-input" placeholder="Hasta">
+                <input type="text" id="descripcionFiltro" class="swal2-input" placeholder="Descripción">`,
+            showCancelButton: true,
+            confirmButtonText: 'Filtrar',
+            preConfirm: () => {
+                const fechaDesde = document.getElementById('fechaDesde').value;
+                const fechaHasta = document.getElementById('fechaHasta').value;
+                const descripcion = document.getElementById('descripcionFiltro').value;
+
+                return { fechaDesde, fechaHasta, descripcion };
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const { fechaDesde, fechaHasta, descripcion } = result.value;
+                filtrarMovimientos(fechaDesde, fechaHasta, descripcion);
+            }
+        });
+    });
 }
 
 // Iniciar la app cargando datos y obteniendo el dólar blue
