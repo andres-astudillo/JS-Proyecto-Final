@@ -1,0 +1,99 @@
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+}
+
+nav ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    justify-content: space-around;
+    background-color: #333;
+    color: white;
+    padding: 10px;
+}
+
+nav ul li {
+    margin: 0 10px;
+}
+
+.buttons-container {
+    margin: 20px 0;
+    display: flex;
+    justify-content: space-between;
+}
+
+.btn-ingreso {
+    background-color: green;
+    color: white;
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-egreso {
+    background-color: red;
+    color: white;
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+}
+
+.icon-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    color: #333;
+}
+
+#movimientosTabla {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#movimientosTabla th, #movimientosTabla td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+#movimientosTabla tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+#movimientosTabla tr:hover {
+    background-color: #ddd;
+}
+
+#movimientosTabla th {
+    background-color: #4CAF50;
+    color: white;
+}
+
+@media (max-width: 600px) {
+    #movimientosTabla, #movimientosTabla thead, #movimientosTabla tbody, #movimientosTabla th, #movimientosTabla td, #movimientosTabla tr {
+        display: block;
+    }
+
+    #movimientosTabla tr {
+        border-bottom: 1px solid #ddd;
+    }
+
+    #movimientosTabla td {
+        text-align: right;
+        padding-left: 50%;
+        position: relative;
+    }
+
+    #movimientosTabla td:before {
+        content: attr(data-label);
+        position: absolute;
+        left: 0;
+        width: 50%;
+        padding-left: 10px;
+        font-weight: bold;
+        text-align: left;
+    }
+}
